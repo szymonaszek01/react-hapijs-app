@@ -1,0 +1,1 @@
+// TODO: Implement ORM mechanism with 'sequelize' library
