@@ -1,5 +1,6 @@
 const { createUser, getUserById, getUserByEmail } = require('../handlers/user.handler');
 const { userOptions } = require('../configs/user.config');
+const Joi = require('joi');
 
 const userRoutes = [
   {
@@ -7,7 +8,7 @@ const userRoutes = [
     path: '/user',
     options: {
       validate: {
-        payload: userOptions().validate.payload,
+        payload: Joi.object(userOptions().validation.payload),
       },
     },
     handler: createUser,
@@ -17,7 +18,7 @@ const userRoutes = [
     path: '/user/id/{id}',
     options: {
       validate: {
-        query: userOptions().validate.query,
+        query: Joi.object(userOptions().validation.query),
       },
     },
     handler: getUserById,
@@ -27,7 +28,7 @@ const userRoutes = [
     path: '/user/email/{email}',
     options: {
       validate: {
-        query: userOptions().validate.query,
+        query: Joi.object(userOptions().validation.query),
       },
     },
     handler: getUserByEmail,

@@ -2,7 +2,7 @@ const { logError, logInfo } = require('./log.handler');
 bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { http } = require('../configs/http.config');
-const { dbGet } = require('./database.handler');
+const { dbGet, dbRun, dbRunWithTransaction } = require('./database.handler');
 
 const file = 'auth.handler.js';
 const bearer = 'Bearer ';
@@ -129,10 +129,75 @@ const signIn = async (request, h) => {
   return h.response(body).code(code);
 };
 
+const signUp = async (request, h) => {
+  const { email, password, phone_number, firstname, lastname, age } = request.payload;
+  let body = {};
+  let code = 0;
+  let userId = undefined;
+  let hash = undefined;
+  let failed = false;
+
+  let query = 'SELECT * FROM user WHERE email = ?';
+  let parameters = [email];
+  await dbGet(query, parameters)
+    .then(row => {
+      userId = row.id;
+      failed = true;
+    })
+    .catch(error => {
+      const message = `unable to load user (${email}) - ${error}`;
+      logError(file, message);
+      code = http.not_found.statusCode;
+      body = { ...http.not_found, message: message };
+    });
+
+  if (!failed) {
+    await encodePassword(password)
+      .then(result => hash = result.hash)
+      .catch(() => failed = true);
+  }
+
+  if (!failed) {
+    query = 'INSERT INTO user(email, password, firstname, lastname, age, phone_number) VALUES(?, ?, ?, ?, ?, ?)';
+    parameters = [email, hash, firstname, lastname, age, phone_number];
+    await dbRunWithTransaction(query, parameters)
+      .then(() => {
+        const message = `user created (${email}) successfully`;
+        logInfo(file, message);
+      })
+      .catch(error => {
+        const message = `unable to create user (${email}) - ${error}`;
+        logError(file, message);
+        code = http.bad_request.statusCode;
+        body = { ...http.bad_request, message: message };
+      });
+
+    query = 'SELECT * FROM user WHERE email = ?';
+    parameters = [email];
+    await dbGet(query, parameters)
+      .then(row => {
+        userId = row.id;
+        const token = createJwt({ userId: userId, role: 'user' });
+        const message = `user (${userId}) signed in successfully`;
+        logInfo(file, message);
+        code = http.ok.statusCode;
+        body = { ...http.ok, token: token };
+      });
+  } else {
+    const message = `unable to creat user (${email}) - user (${userId}) exists`;
+    logError(file, message);
+    code = http.forbidden.statusCode;
+    body = { ...http.forbidden, message: message };
+  }
+
+  return h.response(body).code(code);
+};
+
 module.exports = {
   encodePassword,
   comparePassword,
   isValidJwt,
   createJwt,
   signIn,
+  signUp,
 };
