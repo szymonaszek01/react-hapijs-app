@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { signUpApi } from './auth.api';
-import Cookies from 'js-cookie';
+import { signUpApi } from '../../../api/auth.api';
 import { toast } from 'react-toastify';
 import styles from '../../../style';
 import { BaseInput } from '../../../component';
@@ -55,7 +54,7 @@ const SignUpForm = () => {
         await signUpApi(data)
           .then((response) => {
             const { token } = response.data;
-            Cookies.set('token', token, { expires: 3, secure: true });
+            sessionStorage.setItem('token', token);
             navigate('/dashboard');
             toast.success(`User signed in successfully!`);
           })

@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
 import { BaseInput } from '../../../component';
-import { signInApi } from './auth.api';
+import { signInApi } from '../../../api/auth.api';
 import { toast } from 'react-toastify';
 import styles from '../../../style';
 
@@ -31,9 +30,9 @@ const SignInForm = () => {
       await signInApi(credentials)
         .then((response) => {
           const { token } = response.data;
-          Cookies.set('token', token, { expires: 3, secure: true });
+          sessionStorage.setItem('token', token);
           navigate('/dashboard');
-          toast.success(`User signed in successfully!`);
+          toast.success(`User signed in successfully!`)
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message);

@@ -1,8 +1,32 @@
+import styles from '../../../style';
+import { Logo } from '../../../component';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { getCarsApi } from '../../../api/cars.api';
+import { CarCard } from './index';
+
 const DashboardPage = () => {
+  const [cars, setCars] = useState([]);
+  useEffect(() => {
+    const getCars = async () => {
+      await getCarsApi()
+        .then((response) => {
+          setCars(response.data.data);
+        })
+        .catch((error) => {
+          toast.error(error?.response?.data?.message);
+        });
+    };
+    getCars().then(() => console.log(`cars loaded successfully`));
+  }, [getCarsApi]);
+
   return (
-    <div className={`page bg-black-gradient flex-container center`}>
-      <div className={`w-25 flex-container gap-normal`}>
-        <h1>Hello from protected page!</h1>
+    <div className={`${styles.page} ${styles.flexCol} ${styles.center}`}>
+      <Logo />
+      <div className={`w-full sm:max-w-[700px] ${styles.flexCol} ${styles.center} gap-20 mt-32`}>
+        {cars.map(car => <CarCard key={`car-card-${car.id}`} id={car.id} model={car.model} equipment={car.equipment}
+                                  make={car.make} price={car.price} categoryName={car.category_name}
+                                  createdAt={car.created_at} />)}
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 const { logError, logInfo } = require('./log.handler');
-bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { http } = require('../configs/http.config');
-const { dbGet, dbRun, dbRunWithTransaction } = require('./database.handler');
+const { dbGet, dbRunWithTransaction } = require('./database.handler');
 
 const file = 'auth.handler.js';
 const bearer = 'Bearer ';
@@ -57,7 +57,7 @@ const comparePassword = async (password, hash) => {
   return result;
 };
 
-const isValidJwt = (request, h) => {
+const isValidJwt = (request) => {
   let result = {};
   const token = request.headers['authorization'];
 

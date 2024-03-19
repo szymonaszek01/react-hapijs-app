@@ -8,7 +8,19 @@ const dbGet = async (query, parameters) => {
       } else if (row) {
         resolve(row);
       } else {
-        reject(`user (${parameters.at(0)}) not found`);
+        reject(`object (${parameters.at(0)}) not found`);
+      }
+    });
+  });
+};
+
+const dbAll = async (query) => {
+  return new Promise((resolve, reject) => {
+    db.all(query, (error, rows) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(rows);
       }
     });
   });
@@ -46,6 +58,7 @@ const dbRunWithTransaction = async (query, parameters) => {
 
 module.exports = {
   dbGet,
+  dbAll,
   dbRun,
   dbRunWithTransaction,
 };

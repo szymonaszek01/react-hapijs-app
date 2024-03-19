@@ -3,6 +3,7 @@
 const Hapi = require('@hapi/hapi');
 const { userRoutes } = require('./src/routes/user.routes');
 const { authRoutes } = require('./src/routes/auth.routes');
+const { carRoutes } = require('./src/routes/car.routes');
 
 const init = async () => {
   const server = Hapi.server({
@@ -15,7 +16,8 @@ const init = async () => {
 
   server.route([]
     .concat(userRoutes)
-    .concat(authRoutes),
+    .concat(authRoutes)
+    .concat(carRoutes)
   );
 
   await server.start();
