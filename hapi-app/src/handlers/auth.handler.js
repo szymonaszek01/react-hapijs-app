@@ -80,8 +80,8 @@ const isValidJwt = (request) => {
   return result;
 };
 
-const createJwt = ({ userId, role }) => {
-  const token = jwt.sign({ userId, role }, secretKey, { expiresIn: '15m' });
+const createJwt = ({ userId, roles }) => {
+  const token = jwt.sign({ userId, roles }, secretKey, { expiresIn: '15m' });
   const message = `generated jwt (${token}) for user (${userId})`;
   logInfo(file, message);
   return token;
@@ -112,7 +112,7 @@ const signIn = async (request, h) => {
     await comparePassword(password, passwordHash)
       .then((result) => {
         if (result.match) {
-          const token = createJwt({ userId: userId, role: 'user' });
+          const token = createJwt({ userId: userId, roles: ['user'] });
           const message = `user (${userId}) signed in successfully`;
           logInfo(file, message);
           code = http.ok.statusCode;
@@ -177,7 +177,7 @@ const signUp = async (request, h) => {
     await dbGet(query, parameters)
       .then(row => {
         userId = row.id;
-        const token = createJwt({ userId: userId, role: 'user' });
+        const token = createJwt({ userId: userId, roles: ['user'] });
         const message = `user (${userId}) signed in successfully`;
         logInfo(file, message);
         code = http.ok.statusCode;

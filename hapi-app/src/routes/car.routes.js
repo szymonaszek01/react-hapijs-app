@@ -5,6 +5,12 @@ const carRoutes = [
     method: 'GET',
     path: '/car',
     handler: getCars,
+    config: {
+      auth: {
+        strategy: 'jwt',
+        scope: ['user'],
+      },
+    },
   },
 ];
 

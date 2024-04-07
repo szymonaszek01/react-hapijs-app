@@ -1,20 +1,12 @@
 const { logInfo, logError } = require('./log.handler');
 const { http } = require('../configs/http.config');
 const { dbAll } = require('./database.handler');
-const { isValidJwt } = require('./auth.handler');
 
 const file = `car.handler.js`;
 
 const getCars = async (request, h) => {
   let body = {};
   let code = 0;
-
-  const jwtResult = isValidJwt(request);
-  if (!jwtResult.valid) {
-    const message = `unable to load cars - ${jwtResult.error}`;
-    logError(file, message);
-    return h.response({ ...http.unauthorized, message: message }).code(http.unauthorized.statusCode);
-  }
 
   const query = `SELECT car.*, category.name AS category_name FROM car INNER JOIN category ON car.category_id = category.id`;
   await dbAll(query)

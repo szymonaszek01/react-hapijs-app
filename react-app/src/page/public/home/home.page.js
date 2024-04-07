@@ -1,16 +1,26 @@
 import { SignInForm, SignUpForm } from './index';
 import styles from '../../../style';
-import { useState } from 'react';
-import { Logo } from '../../../component';
+import { useEffect, useState } from 'react';
+import { Logo, SessionExpired } from '../../../component';
 
 const HomePage = () => {
   const [signInForm, setSignInForm] = useState(true);
-  const formStyle = `w-full ${signInForm ? 'sm:max-w-[375px]' : 'sm:max-w-[700px]'} ${styles.flexCol} justify-center items-center sm:items-start gap-11 sm:gap-5 px-8 xs:px-24 sm:px-0`;
+  const [expirationTime, setExpirationTime] = useState(null);
+  const formStyle = `w-full ${signInForm ? 'sm:max-w-[375px]' : 'sm:max-w-[700px]'} ${styles.flexCol} justify-center items-center sm:items-start gap-11 sm:gap-5 px-8 xs:px-24 sm:px-0 mt-32 sm:mt-0`;
+
+  useEffect(() => {
+    const isSessionExpired = () => {
+      setExpirationTime(sessionStorage.getItem('session-expired'));
+    };
+    isSessionExpired();
+  }, []);
+
 
   return (
     <div className={`${styles.page} ${styles.flexCol} ${styles.center}`}>
       <Logo />
       {signInForm ? (<div className={formStyle}>
+        {expirationTime ? <SessionExpired expirationTime={new Date(Date.now())} /> : ''}
         <h1 className={`${styles.title}`}>Sign in</h1>
         <SignInForm />
         <p

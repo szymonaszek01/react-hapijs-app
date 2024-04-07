@@ -22,7 +22,7 @@ api.interceptors.response.use(function(response) {
   if (error.response && error.response.status === 401) {
     const navigate = useNavigate();
     sessionStorage.removeItem('token');
-    toast.info(`Your session expired. Sign in again.`);
+    sessionStorage.setItem('session-expired', new Date(0).toISOString())
     navigate('/');
   }
   return Promise.reject(error);

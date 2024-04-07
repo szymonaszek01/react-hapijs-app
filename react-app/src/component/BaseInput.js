@@ -1,5 +1,5 @@
 import styles from '../style';
-import { MdErrorOutline } from '@react-icons/all-files/md/MdErrorOutline';
+import { MdErrorOutline } from 'react-icons/md';
 
 const BaseInput = ({ label, type, autoComplete, register, error }) => {
   return <div className={`w-full ${styles.flexCol} justify-center items-start`}>

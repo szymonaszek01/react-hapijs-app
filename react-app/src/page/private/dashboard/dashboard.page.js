@@ -1,5 +1,4 @@
 import styles from '../../../style';
-import { Logo } from '../../../component';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getCarsApi } from '../../../api/cars.api';
@@ -22,8 +21,7 @@ const DashboardPage = () => {
 
   return (
     <div className={`${styles.page} ${styles.flexCol} ${styles.center}`}>
-      <Logo />
-      <div className={`w-full sm:max-w-[700px] ${styles.flexCol} ${styles.center} gap-20 mt-32`}>
+      <div className={`w-full sm:max-w-[700px] ${styles.flexCol} ${styles.center} gap-20 mt-32 px-5 sm:px-0`}>
         {cars.map(car => <CarCard key={`car-card-${car.id}`} id={car.id} model={car.model} equipment={car.equipment}
                                   make={car.make} price={car.price} categoryName={car.category_name}
                                   createdAt={car.created_at} />)}
